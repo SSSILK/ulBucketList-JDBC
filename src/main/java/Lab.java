@@ -2,6 +2,7 @@
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -37,11 +38,47 @@ import util.ConnectionUtil;
 public class Lab {
 
     public void createSong(Song song)  {
+        try { Connection connection = ConnectionUtil.getConnection();
+            String sql = "insert into songs (id, title, artist) VALUES (?,?,?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, song.getId());
+            statement.setString(2, song.gettitle());
+            statement.setString(3, song.getArtist());
+            int affectedrows = statement.executeUpdate();
+            System.out.println(affectedrows);
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage() + e.getErrorCode());
+            e.printStackTrace();
+            // TODO: handle exception
+        }
         //write jdbc code here
     }
 
     public List<Song> getAllSongs(){
         List<Song> songs = new ArrayList<>();
+        String sql = "Select * from songs";
+        try {Connection connection = ConnectionUtil.getConnection();
+            Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(sql);
+
+             while (rs.next()) {
+                Song song = new Song();
+                song.setId(rs.getInt("id"));
+                song.settitle(rs.getString("title"));
+                song.setArtist(rs.getString("artist"));
+                songs.add(song);
+               
+                
+             }
+            
+            
+        } catch (SQLException e) {
+            System.out.println(e.getErrorCode() + e.getMessage());
+            e.printStackTrace();
+            // TODO: handle exception
+        }
+        
 
         //write jdbc code here
 
